@@ -1,8 +1,8 @@
 package client.stubs;
 
-import client.entities.ThiefState;
 import protocol.communication.ClientCom;
 import protocol.messages.Command;
+import protocol.messages.CreatedPartyMessage;
 import protocol.messages.Message;
 import protocol.messages.MessageFactory;
 import protocol.messages.OperationDecisionMessage;
@@ -80,5 +80,53 @@ public class CollectionSiteMemoryStub {
         com.close();
 
         return inMessage.getOperation();
+    }
+
+
+    public boolean amINeeded()
+    {
+        boolean needed = false;
+        ClientCom com;
+        Message inMessage, outMessage;
+
+        com = new ClientCom(hostName, port);
+        outMessage = MessageFactory.clientCreate(Command.AMNEEDED);
+        com.send(outMessage);
+
+        inMessage = (Message) com.recv();
+
+        if (inMessage.getCommand() == Command.ACK)
+        {
+            needed = true;
+        } else if (inMessage.getCommand() == Command.UNACK)
+        {
+            needed = false;
+        } else {
+            System.out.println("Invalid resp");
+            System.exit(1);
+        }
+        return needed;
+    }
+
+    public int prepareAssaultParty()
+    {
+        int partyId = -1;
+        ClientCom com;
+        Message outMessage;
+        CreatedPartyMessage inMessage;
+
+        com = new ClientCom(hostName, port);
+        outMessage = MessageFactory.clientCreate(Command.PRPPRTY);
+        com.send(outMessage);
+        inMessage = (CreatedPartyMessage) com.recv();
+        System.out.println(inMessage);
+        if (inMessage.getPartyId() == -1)
+        {
+            System.out.println("Invalid resp");
+            System.exit(1);
+        } 
+        partyId = inMessage.getPartyId();
+        com.close();
+        return partyId;
     }
 }

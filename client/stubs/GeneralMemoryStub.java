@@ -58,4 +58,24 @@ public class GeneralMemoryStub {
         com.close();
     }
 
+    public void setOrdinaryThiefState(int thiefId, ThiefState state)
+    {
+        ClientCom com;
+        Message inMessage;
+        UpdateStateMessage outMessage;
+
+        com = new ClientCom(hostName, port);
+        outMessage = MessageFactory.clientStateUpdateMessage(state);
+
+        com.send(outMessage);
+        inMessage = (Message) com.recv();
+
+        if (inMessage.getCommand() != Command.ACK)
+        {
+            System.out.println("InvalidResp");
+            System.exit(1);
+        }
+        com.close();
+    }
+
 }

@@ -3,6 +3,8 @@ package protocol.messages;
 import java.io.Serializable;
 import java.util.Date;
 
+import client.entities.ThiefState;
+
 public class Message implements Serializable {
 
     private long ts;
@@ -10,6 +12,8 @@ public class Message implements Serializable {
     private Command command;
 
     private int thiefId;
+
+    private ThiefState curState;
 
     public Message()
     {
@@ -21,8 +25,9 @@ public class Message implements Serializable {
         this.command = cmd;
     }
 
-    public Message(int thiefId, Command cmd)
+    public Message(int thiefId, ThiefState state, Command cmd)
     {
+        this.curState = state;
         this.thiefId = thiefId;
         this.command = cmd;
     }
@@ -41,6 +46,11 @@ public class Message implements Serializable {
     public int getThiefId()
     {
         return this.thiefId;
+    }
+
+    public ThiefState getCurrentThiefState()
+    {
+        return this.curState;
     }
 
     public String toString()

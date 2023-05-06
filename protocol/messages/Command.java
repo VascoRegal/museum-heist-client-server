@@ -7,11 +7,18 @@ public enum Command {
     ACK,
     UNACK,
 
+    // Server
+    ACKPRTY,
+
     // Thief Operations
     SET_STATE,
     HSTSTATE,
 
     // MASTER THIEF
     STRTOPS,
-    APPRSIT
+    APPRSIT,
+    PRPPRTY,
+
+    // ORDINARY THIEF
+    AMNEEDED,
 }

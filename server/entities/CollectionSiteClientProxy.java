@@ -1,11 +1,17 @@
 package server.entities;
 
+import client.entities.ThiefCloning;
+import client.entities.ThiefState;
 import protocol.communication.ServerCom;
 import protocol.messages.Message;
 import server.shared.CollectionSiteMemoryInterface;
 
-public class CollectionSiteClientProxy extends Thread {
+public class CollectionSiteClientProxy extends Thread implements ThiefCloning {
     private static int nProxy = 0;
+
+    private int thiefId;
+
+    private ThiefState state;
 
     private ServerCom sconi;
 
@@ -33,5 +39,27 @@ public class CollectionSiteClientProxy extends Thread {
         }
         sconi.send(out);
         sconi.close();
+    }
+
+    @Override
+    public int getThiefId() {
+        return this.thiefId;
+    }
+
+    @Override
+    public void setThiefId(int id)
+    {
+        this.thiefId = id;
+    }
+
+    @Override
+    public ThiefState getThiefState() {
+        return this.state;
+    }
+
+    @Override
+    public void setThiefState(ThiefState state)
+    {
+        this.state = state;
     }
 }

@@ -42,7 +42,19 @@ public class MasterThief extends Thief {
         while (isHeistInProgress())
         {
             action = appraiseSit();
-            System.out.println("nao pode entrar nesta pilice");
+            switch (action)
+            {
+                case 'p':
+                    partyId = prepareAssaultParty();
+                    System.out.println("Created party " + partyId);
+                    break;
+                case 'r':
+                    System.out.println("OPERATION REST");
+                    break;
+                case 's':
+                    System.out.println("Operation END");
+                    break;
+            }
         }
 
         /*
@@ -66,20 +78,29 @@ public class MasterThief extends Thief {
         */
     }
 
-    public void startOperations()
+    private void startOperations()
     {
+        this.setThiefState(ThiefState.PLANNING_THE_HEIST);
         generalMemory.setMasterThiefState(ThiefState.PLANNING_THE_HEIST);
         collectionSiteMemory.startOperations();
     }
 
-    public boolean isHeistInProgress()
+    private boolean isHeistInProgress()
     {
         return collectionSiteMemory.isHeistInProgress();
     }
 
-    public char appraiseSit()
+    private char appraiseSit()
     {
+        this.setThiefState(ThiefState.DECIDING_WHAT_TO_DO);
         generalMemory.setMasterThiefState(ThiefState.DECIDING_WHAT_TO_DO);
         return collectionSiteMemory.appraiseSit();
+    }
+
+    private int prepareAssaultParty()
+    {
+        this.setThiefState(ThiefState.ASSEMBLING_A_GROUP);
+        generalMemory.setMasterThiefState(ThiefState.ASSEMBLING_A_GROUP);
+        return collectionSiteMemory.prepareAssaultParty();
     }
 }

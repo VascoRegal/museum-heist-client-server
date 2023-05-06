@@ -31,7 +31,6 @@ public class GeneralMemoryInterface {
                 } else {
                     this.generalMem.setOrdinaryThiefState(message.getThiefId(), message.getThiefState());
                 }
-                System.out.println("changed mt state!");
                 return MessageFactory.serverCreate(Command.ACK);
             default:
                 break;

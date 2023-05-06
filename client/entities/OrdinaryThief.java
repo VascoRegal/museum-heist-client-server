@@ -1,5 +1,6 @@
 package client.entities;
 
+import client.stubs.CollectionSiteMemoryStub;
 import client.stubs.GeneralMemoryStub;
 import consts.HeistConstants;
 import structs.Utils;
@@ -42,6 +43,9 @@ public class OrdinaryThief extends Thief
     private GeneralMemoryStub generalMemory;
 
 
+    private CollectionSiteMemoryStub collectionSiteMemory;
+
+
     /**
      *  Collection Site memory instantiation.
      *
@@ -53,7 +57,8 @@ public class OrdinaryThief extends Thief
 
     public OrdinaryThief(
         int id,
-        GeneralMemoryStub generalMemory
+        GeneralMemoryStub generalMemory,
+        CollectionSiteMemoryStub collectionSiteMemory
     )
     {
         super(id);
@@ -63,6 +68,7 @@ public class OrdinaryThief extends Thief
         this.partyId = -1;
         this.hasCanvas = false;
         this.generalMemory = generalMemory;
+        this.collectionSiteMemory = collectionSiteMemory;
     }
 
     /**
@@ -71,7 +77,16 @@ public class OrdinaryThief extends Thief
      */
     public void run() {
 
-        
+        while (amINeeded())
+        {
+            try {
+                System.out.println("am needed " + id);
+                Thread.sleep(1000000000);
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
 
         /*
         while (concentrationSiteMemory.amINeeded()) {               // while thief is needed
@@ -169,5 +184,13 @@ public class OrdinaryThief extends Thief
     public int move(int increment) {
         this.position += increment;
         return this.position;
+    }
+
+
+    private boolean amINeeded()
+    {
+        this.setThiefState(ThiefState.CONCENTRATION_SITE);
+        generalMemory.setOrdinaryThiefState(id, ThiefState.CONCENTRATION_SITE);
+        return collectionSiteMemory.amINeeded();
     }
 }

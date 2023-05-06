@@ -13,7 +13,7 @@ public class MessageFactory {
         Thief sender;
         Message m;
         sender = (Thief) Thread.currentThread();
-        m = new Message(sender.getThiefId(), cmd);
+        m = new Message(sender.getThiefId(), sender.getThiefState(), cmd);
         m.setTs();
 
         return m;
@@ -22,7 +22,7 @@ public class MessageFactory {
     public static UpdateStateMessage clientStateUpdateMessage(ThiefState state)
     {
         Message base = clientCreate(Command.SET_STATE);
-        UpdateStateMessage m = new UpdateStateMessage(base.getCommand(), base.getThiefId(), state);
+        UpdateStateMessage m = new UpdateStateMessage(base.getCommand(), base.getThiefId(), base.getCurrentThiefState(), state);
         return m;
     }
 
@@ -42,6 +42,13 @@ public class MessageFactory {
     {
         Message base = serverCreate(Command.ACK);
         OperationDecisionMessage m = new OperationDecisionMessage(base.getCommand(), op);
+        return m;
+    }
+
+    public static CreatedPartyMessage serverCreatedParty(int partyId)
+    {
+        Message base = serverCreate(Command.ACKPRTY);
+        CreatedPartyMessage m  = new CreatedPartyMessage(base.getCommand(), partyId);
         return m;
     }
 }
