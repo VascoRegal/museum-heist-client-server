@@ -26,6 +26,12 @@ public class MessageFactory {
         return m;
     }
 
+    public static PartyOperationMessage clientPartyOperationMessage(Command cmd, int partyId)
+    {
+        Message base = clientCreate(cmd);
+        PartyOperationMessage m = new PartyOperationMessage(base.getThiefId(), base.getCurrentThiefState(), base.getCommand(), partyId);
+        return m;
+    }
 
 
 
@@ -49,6 +55,13 @@ public class MessageFactory {
     {
         Message base = serverCreate(Command.ACKPRTY);
         CreatedPartyMessage m  = new CreatedPartyMessage(base.getCommand(), partyId);
+        return m;
+    }
+
+    public static NeededPartyMessage serverNeededParty(int partyId)
+    {
+        Message base = serverCreate(Command.ACKNEEDED);
+        NeededPartyMessage m  = new NeededPartyMessage(base.getCommand(), partyId);
         return m;
     }
 }

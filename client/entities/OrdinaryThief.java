@@ -1,6 +1,7 @@
 package client.entities;
 
 import client.stubs.CollectionSiteMemoryStub;
+import client.stubs.PartiesMemoryStub;
 import client.stubs.GeneralMemoryStub;
 import consts.HeistConstants;
 import structs.Utils;
@@ -45,11 +46,13 @@ public class OrdinaryThief extends Thief
 
     private CollectionSiteMemoryStub collectionSiteMemory;
 
+    private PartiesMemoryStub partiesSiteMemory;
+
 
     /**
      *  Collection Site memory instantiation.
      *
-     *    @param concentrationSiteMemory concentration memory reference
+     *    @param partiesSiteMemory concentration memory reference
      *    @param museumMemory museum memory reference
      *    @param partiesMemory parties memory reference
      *    @param collectionSiteMemory collection site memory reference
@@ -58,7 +61,8 @@ public class OrdinaryThief extends Thief
     public OrdinaryThief(
         int id,
         GeneralMemoryStub generalMemory,
-        CollectionSiteMemoryStub collectionSiteMemory
+        CollectionSiteMemoryStub collectionSiteMemory,
+        PartiesMemoryStub partiesSiteMemory
     )
     {
         super(id);
@@ -69,6 +73,7 @@ public class OrdinaryThief extends Thief
         this.hasCanvas = false;
         this.generalMemory = generalMemory;
         this.collectionSiteMemory = collectionSiteMemory;
+        this.partiesSiteMemory = partiesSiteMemory;
     }
 
     /**
@@ -76,23 +81,18 @@ public class OrdinaryThief extends Thief
      *  Main lifecylce
      */
     public void run() {
+        int partyId, roomId;
 
         while (amINeeded())
         {
-            try {
-                System.out.println("am needed " + id);
-                Thread.sleep(1000000000);
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
+            prepareExcursion();
         }
 
         /*
-        while (concentrationSiteMemory.amINeeded()) {               // while thief is needed
+        while (partiesSiteMemory.amINeeded()) {               // while thief is needed
             int room = -1;                                          // reference to target room
 
-            partyId = concentrationSiteMemory.prepareExcursion();   // if he's needed, prepare the excursion
+            partyId = partiesSiteMemory.prepareExcursion();   // if he's needed, prepare the excursion
             room = partiesMemory.crawlingIn();                      // begin crawling when ready                    
             museumMemory.rollACanvas(room);                         // at the room, steal canvas
             partiesMemory.crawlingOut();                            // crawl back to site
@@ -191,6 +191,15 @@ public class OrdinaryThief extends Thief
     {
         this.setThiefState(ThiefState.CONCENTRATION_SITE);
         generalMemory.setOrdinaryThiefState(id, ThiefState.CONCENTRATION_SITE);
-        return collectionSiteMemory.amINeeded();
+        int party = collectionSiteMemory.amINeeded();
+        this.setPartyId(party);
+        return (party != -1);
+    }
+
+    private void prepareExcursion()
+    {
+        this.setThiefState(ThiefState.CRAWLING_INWARDS);
+        generalMemory.setOrdinaryThiefState(id, ThiefState.CRAWLING_INWARDS);
+        partiesSiteMemory.prepareExcursion(this.getPartyId());
     }
 }

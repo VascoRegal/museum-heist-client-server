@@ -9,6 +9,7 @@ public enum Command {
 
     // Server
     ACKPRTY,
+    ACKNEEDED,
 
     // Thief Operations
     SET_STATE,
@@ -18,7 +19,10 @@ public enum Command {
     STRTOPS,
     APPRSIT,
     PRPPRTY,
+    TKREST,
+    SNDPRTY,
 
     // ORDINARY THIEF
     AMNEEDED,
+    PRPEXCRS,
 }

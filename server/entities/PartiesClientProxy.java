@@ -4,9 +4,9 @@ import client.entities.ThiefCloning;
 import client.entities.ThiefState;
 import protocol.communication.ServerCom;
 import protocol.messages.Message;
-import server.shared.CollectionSiteMemoryInterface;
+import server.shared.PartiesMemoryInterface;
 
-public class CollectionSiteClientProxy extends Thread implements ThiefCloning {
+public class PartiesClientProxy extends Thread implements ThiefCloning {
     private static int nProxy = 0;
 
     private int thiefId;
@@ -17,12 +17,12 @@ public class CollectionSiteClientProxy extends Thread implements ThiefCloning {
 
     private ServerCom sconi;
 
-    private CollectionSiteMemoryInterface colSiteI;
+    private PartiesMemoryInterface partiesI;
 
-    public CollectionSiteClientProxy(ServerCom sconi, CollectionSiteMemoryInterface colSiteI)
+    public PartiesClientProxy(ServerCom sconi, PartiesMemoryInterface partiesI)
     {
         this.sconi = sconi;
-        this.colSiteI = colSiteI;
+        this.partiesI = partiesI;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CollectionSiteClientProxy extends Thread implements ThiefCloning {
         in = (Message) sconi.recv();
         try 
         {
-            out = colSiteI.process(in);
+            out = partiesI.process(in);
         } catch (Exception e)
         {
             e.printStackTrace();

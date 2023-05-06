@@ -6,6 +6,7 @@ import protocol.messages.CreatedPartyMessage;
 import protocol.messages.Message;
 import protocol.messages.MessageFactory;
 import protocol.messages.OperationDecisionMessage;
+import protocol.messages.NeededPartyMessage;
 
 public class CollectionSiteMemoryStub {
     
@@ -83,29 +84,27 @@ public class CollectionSiteMemoryStub {
     }
 
 
-    public boolean amINeeded()
+    public int amINeeded()
     {
-        boolean needed = false;
+        int partyId = -1;
         ClientCom com;
-        Message inMessage, outMessage;
+        Message outMessage;
+        NeededPartyMessage inMessage;
 
         com = new ClientCom(hostName, port);
         outMessage = MessageFactory.clientCreate(Command.AMNEEDED);
         com.send(outMessage);
 
-        inMessage = (Message) com.recv();
+        inMessage = (NeededPartyMessage) com.recv();
 
-        if (inMessage.getCommand() == Command.ACK)
+        if (inMessage.getCommand() == Command.ACKNEEDED)
         {
-            needed = true;
-        } else if (inMessage.getCommand() == Command.UNACK)
-        {
-            needed = false;
+            partyId = inMessage.getPartyId();
         } else {
             System.out.println("Invalid resp");
             System.exit(1);
         }
-        return needed;
+        return partyId;
     }
 
     public int prepareAssaultParty()
@@ -128,5 +127,23 @@ public class CollectionSiteMemoryStub {
         partyId = inMessage.getPartyId();
         com.close();
         return partyId;
+    }
+
+
+    public void takeARest()
+    {
+        ClientCom com;
+        Message inMessage, outMessage;
+
+        com = new ClientCom(hostName, port);
+        outMessage = MessageFactory.clientCreate(Command.TKREST);
+        com.send(outMessage);
+        inMessage = (Message) com.recv();
+        if (inMessage.getCommand() != Command.ACK)
+        {
+            System.out.println("Invalid resp");
+            System.exit(1);
+        }
+        com.close();
     }
 }

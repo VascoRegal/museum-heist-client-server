@@ -5,4 +5,6 @@ public interface ThiefCloning {
     public void setThiefId(int id);
     public ThiefState getThiefState();
     public void setThiefState(ThiefState state);
+    public int getPartyId();
+    public void setPartyId(int id);
 }

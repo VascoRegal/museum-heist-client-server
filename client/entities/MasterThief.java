@@ -1,6 +1,7 @@
 package client.entities;
 
 import client.stubs.CollectionSiteMemoryStub;
+import client.stubs.PartiesMemoryStub;
 import client.stubs.GeneralMemoryStub;
 
 public class MasterThief extends Thief {
@@ -8,6 +9,8 @@ public class MasterThief extends Thief {
     GeneralMemoryStub generalMemory;
 
     CollectionSiteMemoryStub collectionSiteMemory;
+
+    PartiesMemoryStub partiesMemory;
 
     /**
      *  Collection Site memory instantiation.
@@ -20,12 +23,13 @@ public class MasterThief extends Thief {
     public MasterThief(
         int id,
         GeneralMemoryStub generalMemory,
-        CollectionSiteMemoryStub collectionSiteMemory) 
+        CollectionSiteMemoryStub collectionSiteMemory,
+        PartiesMemoryStub partiesMemory) 
     {
         super(id);
         this.generalMemory = generalMemory;
         this.collectionSiteMemory = collectionSiteMemory;
-        
+        this.partiesMemory = partiesMemory;
     }
 
     /**
@@ -47,9 +51,10 @@ public class MasterThief extends Thief {
                 case 'p':
                     partyId = prepareAssaultParty();
                     System.out.println("Created party " + partyId);
+                    sendAssaultParty(partyId);
                     break;
                 case 'r':
-                    System.out.println("OPERATION REST");
+                    takeARest();
                     break;
                 case 's':
                     System.out.println("Operation END");
@@ -102,5 +107,19 @@ public class MasterThief extends Thief {
         this.setThiefState(ThiefState.ASSEMBLING_A_GROUP);
         generalMemory.setMasterThiefState(ThiefState.ASSEMBLING_A_GROUP);
         return collectionSiteMemory.prepareAssaultParty();
+    }
+
+    private void sendAssaultParty(int partyId)
+    {
+        this.setThiefState(ThiefState.DECIDING_WHAT_TO_DO);
+        generalMemory.setMasterThiefState(ThiefState.DECIDING_WHAT_TO_DO);
+        partiesMemory.sendAssaultParty(partyId);
+    }
+
+    private void takeARest()
+    {
+        this.setThiefState(ThiefState.WAITING_FOR_GROUP_ARRIVAL);
+        generalMemory.setMasterThiefState(ThiefState.WAITING_FOR_GROUP_ARRIVAL);
+        collectionSiteMemory.takeARest();
     }
 }

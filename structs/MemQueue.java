@@ -54,5 +54,9 @@ public class MemQueue<T> {
         return this.array;
     }
 
+    public boolean empty()
+    {
+        return this.size == 0;
+    }
 }
 

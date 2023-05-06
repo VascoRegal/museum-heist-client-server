@@ -10,5 +10,9 @@ public final class Registry {
 
     // Col Site
     public static final String CollectionSiteHost = "localhost";
-    public static final int CollectionSitePort = 4001;    
+    public static final int CollectionSitePort = 4001;   
+    
+    // Con Site
+    public static final String PartiesHost = "localhost";
+    public static final int PartiesPort = 4002;   
 }

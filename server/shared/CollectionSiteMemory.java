@@ -21,7 +21,11 @@ public class CollectionSiteMemory {
 
     private CollectionSiteClientProxy[] ots;
 
+    private int[] partyAssignments;
+
     private MemQueue<Integer> availableThieves;
+
+    private MemQueue<Integer> collectiningThieves;
 
     public CollectionSiteMemory()
     {
@@ -38,7 +42,13 @@ public class CollectionSiteMemory {
         {
             ots[i] = null;
         }
+        partyAssignments = new int[HeistConstants.NUM_THIEVES];
+        for (i = 0; i < HeistConstants.NUM_THIEVES; i++)
+        {
+            partyAssignments[i] = -1;
+        }
         availableThieves = new MemQueue<>(new Integer[HeistConstants.NUM_THIEVES]);
+        collectiningThieves = new MemQueue<>(new Integer[HeistConstants.NUM_THIEVES]);
     }
 
     public synchronized boolean getHeistStatus()
@@ -48,11 +58,13 @@ public class CollectionSiteMemory {
 
     public synchronized void startOperations()
     {
+        mt = ((CollectionSiteClientProxy) Thread.currentThread());
+        mt.setThiefState(ThiefState.PLANNING_THE_HEIST);
         this.heistInProgress = true;
     }
 
     
-    public synchronized boolean amINeeded()
+    public synchronized int amINeeded()
     {
 
         int ordinaryThiefId;
@@ -75,17 +87,15 @@ public class CollectionSiteMemory {
             }
         }
 
-        if (!heistInProgress) {
-            return false;
-        }
-
-        return true;
+        return partyAssignments[ordinaryThiefId];
     }
 
     public synchronized char appraiseSit()
     {
+        mt = ((CollectionSiteClientProxy) Thread.currentThread());
         if (clearedRooms == HeistConstants.NUM_ROOMS && activeParties == 0)
         {
+            mt.setThiefState(ThiefState.PRESENTING_THE_REPORT);
             heistInProgress = false;
             return 's';
         }
@@ -93,8 +103,10 @@ public class CollectionSiteMemory {
         if (activeParties == HeistConstants.MAX_NUM_PARTIES ||
             (availableRooms == 0 && activeParties == 1))
         {
+            mt.setThiefState(ThiefState.WAITING_FOR_GROUP_ARRIVAL);
             return 'r';
         } else {
+            mt.setThiefState(ThiefState.ASSEMBLING_A_GROUP);
             while (numAvailableThieves < HeistConstants.PARTY_SIZE)
             {
                 try {
@@ -111,22 +123,40 @@ public class CollectionSiteMemory {
 
     public synchronized int prepareAssaultParty()
     {
+        mt = ((CollectionSiteClientProxy) Thread.currentThread());
         int availableThiefId, partyId;
         if (activeParties == HeistConstants.MAX_NUM_PARTIES) {
             return -1;
         }
 
+        partyId = activeParties;
         for (int i = 0; i < HeistConstants.PARTY_SIZE; i++)
         {
             availableThiefId = availableThieves.dequeue();
             ots[availableThiefId].setThiefState(ThiefState.CRAWLING_INWARDS);
+            partyAssignments[availableThiefId] = partyId;
             System.out.println("Pulled " + i + "/3" + " Thieves [OT" + availableThiefId + "]");
             numAvailableThieves--;
             notifyAll();
         }
 
-        partyId = activeParties;
         activeParties++;
         return partyId;
+    }
+
+    public synchronized void takeARest()
+    {
+        mt = ((CollectionSiteClientProxy) Thread.currentThread());
+        mt.setThiefState(ThiefState.WAITING_FOR_GROUP_ARRIVAL);
+        while (collectiningThieves.empty())
+        {
+            try {
+                System.out.println("Taking a rest");
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
     }
 }

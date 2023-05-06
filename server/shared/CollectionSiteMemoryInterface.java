@@ -3,7 +3,6 @@ package server.shared;
 import protocol.messages.Command;
 import protocol.messages.Message;
 import protocol.messages.MessageFactory;
-import protocol.messages.UpdateStateMessage;
 import server.entities.CollectionSiteClientProxy;
 
 public class CollectionSiteMemoryInterface {
@@ -42,14 +41,8 @@ public class CollectionSiteMemoryInterface {
                 return MessageFactory.serverCreate(Command.ACK);
 
             case AMNEEDED:
-                boolean needed = collectionSiteMemory.amINeeded();
-                if (needed)
-                {
-                    cmd = Command.ACK;
-                } else {
-                    cmd = Command.UNACK;
-                }
-                return MessageFactory.serverCreate(cmd);
+                int needed = collectionSiteMemory.amINeeded();
+                return MessageFactory.serverNeededParty(needed);
 
             case APPRSIT:
                 char op = collectionSiteMemory.appraiseSit();
@@ -58,6 +51,10 @@ public class CollectionSiteMemoryInterface {
             case PRPPRTY:
                 int partyId = collectionSiteMemory.prepareAssaultParty();
                 return MessageFactory.serverCreatedParty(partyId);
+
+            case TKREST:
+                collectionSiteMemory.takeARest();
+                return MessageFactory.serverCreate(Command.ACK);
 
             default:
                 break;
