@@ -3,6 +3,7 @@ package client.entities;
 import client.stubs.CollectionSiteMemoryStub;
 import client.stubs.PartiesMemoryStub;
 import client.stubs.GeneralMemoryStub;
+import client.stubs.MuseumMemoryStub;
 
 public class MasterThief extends Thief {
 
@@ -11,6 +12,8 @@ public class MasterThief extends Thief {
     CollectionSiteMemoryStub collectionSiteMemory;
 
     PartiesMemoryStub partiesMemory;
+
+    MuseumMemoryStub museumMemory;
 
     /**
      *  Collection Site memory instantiation.
@@ -24,12 +27,14 @@ public class MasterThief extends Thief {
         int id,
         GeneralMemoryStub generalMemory,
         CollectionSiteMemoryStub collectionSiteMemory,
-        PartiesMemoryStub partiesMemory) 
+        PartiesMemoryStub partiesMemory,
+        MuseumMemoryStub museumMemory) 
     {
         super(id);
         this.generalMemory = generalMemory;
         this.collectionSiteMemory = collectionSiteMemory;
         this.partiesMemory = partiesMemory;
+        this.museumMemory = museumMemory;
     }
 
     /**
@@ -111,9 +116,10 @@ public class MasterThief extends Thief {
 
     private void sendAssaultParty(int partyId)
     {
+        int targetRoom = museumMemory.getAvailableRoom();
         this.setThiefState(ThiefState.DECIDING_WHAT_TO_DO);
+        partiesMemory.sendAssaultParty(partyId, targetRoom);
         generalMemory.setMasterThiefState(ThiefState.DECIDING_WHAT_TO_DO);
-        partiesMemory.sendAssaultParty(partyId);
     }
 
     private void takeARest()

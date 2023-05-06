@@ -3,6 +3,7 @@ package client.entities;
 import client.stubs.CollectionSiteMemoryStub;
 import client.stubs.PartiesMemoryStub;
 import client.stubs.GeneralMemoryStub;
+import client.stubs.MuseumMemoryStub;
 import consts.HeistConstants;
 import structs.Utils;
 
@@ -48,6 +49,7 @@ public class OrdinaryThief extends Thief
 
     private PartiesMemoryStub partiesSiteMemory;
 
+    private MuseumMemoryStub museumMemoryStub;
 
     /**
      *  Collection Site memory instantiation.
@@ -62,7 +64,8 @@ public class OrdinaryThief extends Thief
         int id,
         GeneralMemoryStub generalMemory,
         CollectionSiteMemoryStub collectionSiteMemory,
-        PartiesMemoryStub partiesSiteMemory
+        PartiesMemoryStub partiesSiteMemory,
+        MuseumMemoryStub museumMemoryStub
     )
     {
         super(id);
@@ -74,6 +77,7 @@ public class OrdinaryThief extends Thief
         this.generalMemory = generalMemory;
         this.collectionSiteMemory = collectionSiteMemory;
         this.partiesSiteMemory = partiesSiteMemory;
+        this.museumMemoryStub = museumMemoryStub;
     }
 
     /**
@@ -82,10 +86,18 @@ public class OrdinaryThief extends Thief
      */
     public void run() {
         int partyId, roomId;
+        boolean hasCanvas;
 
         while (amINeeded())
         {
-            prepareExcursion();
+            roomId = prepareExcursion();
+            crawlIn(roomId);
+            hasCanvas = pickCanvas(roomId);
+            System.out.println("[OT" + this.id + "] has canvas = " + hasCanvas);
+            crawlOut();
+
+            System.out.println("redy for za ganaza " + id);
+
         }
 
         /*
@@ -196,10 +208,30 @@ public class OrdinaryThief extends Thief
         return (party != -1);
     }
 
-    private void prepareExcursion()
+    private int prepareExcursion()
     {
         this.setThiefState(ThiefState.CRAWLING_INWARDS);
         generalMemory.setOrdinaryThiefState(id, ThiefState.CRAWLING_INWARDS);
-        partiesSiteMemory.prepareExcursion(this.getPartyId());
+        return partiesSiteMemory.prepareExcursion(this.getPartyId());
+    }
+
+    private void crawlIn(int roomId)
+    {
+        int roomLocation = museumMemoryStub.getRoomLocation(roomId);
+        partiesSiteMemory.crawlIn(roomLocation, this.getMaxDisplacement());
+        generalMemory.setOrdinaryThiefState(this.id, ThiefState.AT_A_ROOM);
+        this.setThiefState(ThiefState.AT_A_ROOM);
+    }
+
+    private boolean pickCanvas(int roomId)
+    {
+        return museumMemoryStub.pickCanvas(roomId);
+    }
+
+    private void crawlOut()
+    {
+        generalMemory.setOrdinaryThiefState(id, ThiefState.CRAWLING_OUTWARDS);
+        this.setThiefState(ThiefState.CRAWLING_OUTWARDS);
+        partiesSiteMemory.crawlOut();
     }
 }

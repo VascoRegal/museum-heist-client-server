@@ -13,6 +13,10 @@ public class PartiesClientProxy extends Thread implements ThiefCloning {
 
     private int partyId;
 
+    private int position;
+
+    private int md;
+
     private ThiefState state;
 
     private ServerCom sconi;
@@ -76,4 +80,29 @@ public class PartiesClientProxy extends Thread implements ThiefCloning {
     {
         this.partyId = id;
     }
+
+    public int getPosition()
+    {
+        return this.position;
+    }
+
+    public void setPosition(int pos)
+    {
+        this.position = pos;
+    }
+
+    public int move(int increment) {
+        this.position += increment;
+        return this.position;
+    }
+
+    public int getMaxDisplacement() {
+        return this.md;
+    }
+
+    public void setMaxDisplacement(int md)
+    {
+        this.md = md;
+    }
+
 }

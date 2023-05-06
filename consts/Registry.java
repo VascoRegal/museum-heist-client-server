@@ -12,7 +12,11 @@ public final class Registry {
     public static final String CollectionSiteHost = "localhost";
     public static final int CollectionSitePort = 4001;   
     
-    // Con Site
+    // Parties
     public static final String PartiesHost = "localhost";
-    public static final int PartiesPort = 4002;   
+    public static final int PartiesPort = 4002;
+
+    // Museum
+    public static final String MuseumHost = "localhost";
+    public static final int MuseumPort = 4003;
 }

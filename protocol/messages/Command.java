@@ -10,6 +10,10 @@ public enum Command {
     // Server
     ACKPRTY,
     ACKNEEDED,
+    ACKROOM,
+    ACKROOMLOC,
+    ACKCNVS,
+    UNACKCNVS,
 
     // Thief Operations
     SET_STATE,
@@ -21,8 +25,13 @@ public enum Command {
     PRPPRTY,
     TKREST,
     SNDPRTY,
+    AVLROOM,
 
     // ORDINARY THIEF
     AMNEEDED,
     PRPEXCRS,
+    ROOMLOC,
+    CRWLIN,
+    CRWLOT,
+    PCKCNVAS
 }
