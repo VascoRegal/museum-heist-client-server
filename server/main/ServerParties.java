@@ -32,7 +32,7 @@ public class ServerParties {
         scon = new ServerCom(port);
         scon.start();
 
-        System.out.println("General Server listening @ " + port);
+        System.out.println("Parties Server listening @ " + port);
 
         PartiesClientProxy cliProxy;
         boolean running = true;

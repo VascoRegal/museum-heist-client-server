@@ -26,6 +26,7 @@ public enum Command {
     TKREST,
     SNDPRTY,
     AVLROOM,
+    COLCNVAS,
 
     // ORDINARY THIEF
     AMNEEDED,
@@ -33,5 +34,6 @@ public enum Command {
     ROOMLOC,
     CRWLIN,
     CRWLOT,
-    PCKCNVAS
+    PCKCNVAS,
+    HNDCNVAS
 }

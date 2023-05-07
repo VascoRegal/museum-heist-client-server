@@ -68,6 +68,13 @@ public class MessageFactory {
         return m;
     }
 
+    public static HandCanvasMessage clientHandCanvas(boolean hasCanvas)
+    {
+        Message base = clientCreate(Command.HNDCNVAS);
+        HandCanvasMessage m = new HandCanvasMessage(base.getThiefId(), base.getCurrentThiefState(), base.getCommand(), hasCanvas);
+        return m;
+    }
+
 
 
     // Servers

@@ -45,6 +45,7 @@ public class MuseumMemory {
     public int findNonClearedRoom() {
         for (int i=0 ; i < rooms.length; i++) {
             if (rooms[i].getRoomState() == RoomState.AVAILABLE) {
+                rooms[i].setRoomState(RoomState.IN_PROGRESS);
                 return i;
             }
         }
@@ -83,9 +84,14 @@ public class MuseumMemory {
         boolean picked = false;
         targetRoom = rooms[roomId];
 
+        System.out.println(String.format("[ROOM%d] Rolling a canvas", roomId));
         if (!targetRoom.isEmpty()) {
             targetRoom.removePainting();
+            System.out.println(String.format("[ROOM%d] We can roll it up", roomId));
             picked = true;
+        } else {
+            System.out.println(String.format("[ROOM%d] Room is empty", roomId));
+            targetRoom.setRoomState(RoomState.COMPLETED);
         }
         return picked;
     }

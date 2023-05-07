@@ -55,17 +55,20 @@ public class MasterThief extends Thief {
             {
                 case 'p':
                     partyId = prepareAssaultParty();
-                    System.out.println("Created party " + partyId);
+                    //System.out.println("Created party " + partyId);
                     sendAssaultParty(partyId);
                     break;
                 case 'r':
                     takeARest();
+                    collectACanvas();
                     break;
                 case 's':
-                    System.out.println("Operation END");
+                    //System.out.println("Operation END");
                     break;
             }
         }
+
+        System.out.println("present the res my nigga gear up bucko");
 
         /*
         collectionSiteMemory.startOperations();                             // start the operations
@@ -127,5 +130,12 @@ public class MasterThief extends Thief {
         this.setThiefState(ThiefState.WAITING_FOR_GROUP_ARRIVAL);
         generalMemory.setMasterThiefState(ThiefState.WAITING_FOR_GROUP_ARRIVAL);
         collectionSiteMemory.takeARest();
+    }
+
+    private void collectACanvas()
+    {
+        collectionSiteMemory.collectCanvas();
+        generalMemory.setMasterThiefState(ThiefState.DECIDING_WHAT_TO_DO);
+        this.setThiefState(ThiefState.DECIDING_WHAT_TO_DO);
     }
 }

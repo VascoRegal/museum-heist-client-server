@@ -49,6 +49,7 @@ public class PartiesMemory {
     {
         readyParties[partyId] = HeistConstants.PARTY_SIZE;
         partyRooms[partyId] = roomId;
+        System.out.println(String.format("[MT] :  Sending party %d to room %d.",partyId, roomId));
         notifyAll();
     }
 
@@ -61,11 +62,13 @@ public class PartiesMemory {
         ots[ordinaryThiefId].setThiefState(ThiefState.CRAWLING_INWARDS);
         partyMembers[ordinaryThiefId] = partyId;
 
+        System.out.println(String.format("[PARTY%d] [OT%d] :  Preparing for excursion.",partyId, ordinaryThiefId));
+
         if (parties[partyId] == null)
         {
             parties[partyId] = new MemPartyArray(new PartiesClientProxy[HeistConstants.PARTY_SIZE]);
             nextMovingThief[partyId] = ordinaryThiefId;
-            System.out.println("[P" + partyId + " I AM HEAD - " + ordinaryThiefId);
+            System.out.println(String.format("[PARTY%d] :  Head is OT%d.",partyId, ordinaryThiefId));
         }
 
         try {
@@ -102,6 +105,7 @@ public class PartiesMemory {
         int partyId;
         currentThief = ((PartiesClientProxy) Thread.currentThread());
         partyId = partyMembers[currentThief.getThiefId()];
+        System.out.println(String.format("[PARTY%d] :  Begin Crawling In Movement", partyId));
         parties[partyId].updateThreads();
 
         while (true) {
@@ -115,9 +119,6 @@ public class PartiesMemory {
                     e.printStackTrace();
                 }
             }
-            if (partyId == 0) {
-                System.out.println(String.format("OT%d (pos=%d, md=%d) will try movement", currentThief.getThiefId(), currentThief.getPosition(), currentThief.getMaxDisplacement()));
-            }
             while (parties[partyId].canMove() && currentThief.getPosition() < roomLocation) {
 
                 parties[partyId].doBestMove();
@@ -129,6 +130,10 @@ public class PartiesMemory {
             if (currentThief.getPosition() >= roomLocation) {
                 currentThief.setThiefState(ThiefState.AT_A_ROOM);
                 currentThief.setPosition(roomLocation);
+                if (currentThief.getThiefId() == parties[partyId].tail().getThiefId())
+                {
+                    nextMovingThief[partyId] = -1;
+                }
                 break;
             }
         }
@@ -144,6 +149,8 @@ public class PartiesMemory {
 
         currentThief = ((PartiesClientProxy) Thread.currentThread());
         partyId = partyMembers[currentThief.getThiefId()];
+
+        System.out.println(String.format("[PARTY%d] [OT%d] :  Begin Crawling Out Movement", partyId, currentThief.getThiefId()));
 
         parties[partyId].updateThreads();
 

@@ -15,6 +15,8 @@ public class CollectionSiteClientProxy extends Thread implements ThiefCloning {
 
     private ThiefState state;
 
+    private boolean canvas;
+
     private ServerCom sconi;
 
     private CollectionSiteMemoryInterface colSiteI;
@@ -75,5 +77,15 @@ public class CollectionSiteClientProxy extends Thread implements ThiefCloning {
     public void setPartyId(int id)
     {
         this.partyId = id;
+    }
+
+    public boolean getCanvas()
+    {
+        return this.canvas;
+    }
+
+    public void setCanvas(boolean cnvs)
+    {
+        this.canvas = cnvs;
     }
 }

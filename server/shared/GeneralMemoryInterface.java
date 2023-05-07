@@ -17,7 +17,7 @@ public class GeneralMemoryInterface {
 
     public Message process(Message in)
     {
-        System.out.println(in);
+        //System.out.println(in);
 
         switch (in.getCommand())
         {

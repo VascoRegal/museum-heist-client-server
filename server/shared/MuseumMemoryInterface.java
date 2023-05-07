@@ -16,7 +16,7 @@ public class MuseumMemoryInterface {
 
     public Message process(Message in)
     {
-        System.out.println(in);
+        //System.out.println(in);
         int roomId, location;
         RoomInfoMessage m;
         Command cmd;

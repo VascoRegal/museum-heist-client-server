@@ -32,7 +32,7 @@ public class ServerCollectionSite {
         scon = new ServerCom(port);
         scon.start();
 
-        System.out.println("General Server listening @ " + port);
+        System.out.println("Collection Server listening @ " + port);
 
         CollectionSiteClientProxy cliProxy;
         boolean running = true;

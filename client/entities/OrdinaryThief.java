@@ -85,19 +85,22 @@ public class OrdinaryThief extends Thief
      *  Main lifecylce
      */
     public void run() {
-        int partyId, roomId;
+        int roomId;
         boolean hasCanvas;
 
         while (amINeeded())
         {
+            System.out.println(String.format("[OT%d] Preparing for excursion", id));
             roomId = prepareExcursion();
+            System.out.println(String.format("[PARTY%d] [OT%d] Excursion goal is room %d", this.partyId, id, roomId));
             crawlIn(roomId);
+            System.out.println(String.format("[PARTY%d] [OT%d] Arrived at room %d. ", this.partyId, id, roomId));
             hasCanvas = pickCanvas(roomId);
-            System.out.println("[OT" + this.id + "] has canvas = " + hasCanvas);
+            System.out.println(String.format("[PARTY%d] [OT%d] Piced canvas. ", this.partyId, id));
             crawlOut();
-
-            System.out.println("redy for za ganaza " + id);
-
+            System.out.println(String.format("[PARTY%d] [OT%d] Crawled back to COLLECTION SITE. ", this.partyId, id));
+            handACanvas(hasCanvas);
+            System.out.println(String.format("[PARTY%d] [OT%d] Handed the canvas ", this.partyId, id));
         }
 
         /*
@@ -233,5 +236,15 @@ public class OrdinaryThief extends Thief
         generalMemory.setOrdinaryThiefState(id, ThiefState.CRAWLING_OUTWARDS);
         this.setThiefState(ThiefState.CRAWLING_OUTWARDS);
         partiesSiteMemory.crawlOut();
+    }
+
+    private void handACanvas(boolean hasCanvas)
+    {
+        generalMemory.setOrdinaryThiefState(id, ThiefState.COLLECTION_SITE);
+        this.setThiefState(ThiefState.COLLECTION_SITE);
+        collectionSiteMemory.handACanvas(hasCanvas);
+        this.setPartyId(-1);
+        generalMemory.setOrdinaryThiefState(id, ThiefState.CONCENTRATION_SITE);
+        this.setThiefState(ThiefState.CONCENTRATION_SITE);
     }
 }

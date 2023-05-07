@@ -3,6 +3,7 @@ package client.stubs;
 import protocol.communication.ClientCom;
 import protocol.messages.Command;
 import protocol.messages.CreatedPartyMessage;
+import protocol.messages.HandCanvasMessage;
 import protocol.messages.Message;
 import protocol.messages.MessageFactory;
 import protocol.messages.OperationDecisionMessage;
@@ -50,7 +51,6 @@ public class CollectionSiteMemoryStub {
         outMessage = MessageFactory.clientCreate(Command.HSTSTATE);
         com.send(outMessage);
         inMessage = (Message) com.recv();
-        System.out.println(inMessage);
         if (inMessage.getCommand() == Command.ACK)
         {
             res = true;
@@ -76,7 +76,6 @@ public class CollectionSiteMemoryStub {
         com.send(outMessage);
 
         inMessage = (OperationDecisionMessage) com.recv();
-        System.out.println(inMessage);
 
         com.close();
 
@@ -118,7 +117,6 @@ public class CollectionSiteMemoryStub {
         outMessage = MessageFactory.clientCreate(Command.PRPPRTY);
         com.send(outMessage);
         inMessage = (CreatedPartyMessage) com.recv();
-        System.out.println(inMessage);
         if (inMessage.getPartyId() == -1)
         {
             System.out.println("Invalid resp");
@@ -138,6 +136,45 @@ public class CollectionSiteMemoryStub {
         com = new ClientCom(hostName, port);
         outMessage = MessageFactory.clientCreate(Command.TKREST);
         com.send(outMessage);
+        inMessage = (Message) com.recv();
+        if (inMessage.getCommand() != Command.ACK)
+        {
+            System.out.println("Invalid resp");
+            System.exit(1);
+        }
+        com.close();
+    }
+
+    public void handACanvas(boolean hasCanvas)
+    {
+        ClientCom com;
+        HandCanvasMessage outMessage;
+        Message inMessage;
+
+        com = new ClientCom(hostName, port);
+        outMessage = MessageFactory.clientHandCanvas(hasCanvas);
+
+        com.send(outMessage);
+
+        inMessage = (Message) com.recv();
+        if (inMessage.getCommand() != Command.ACK)
+        {
+            System.out.println("Invalid resp");
+            System.exit(1);
+        }
+        com.close();
+    }
+
+    public void collectCanvas()
+    {
+        ClientCom com;
+        Message inMessage, outMessage;
+
+        com = new ClientCom(hostName, port);
+
+        outMessage = MessageFactory.clientCreate(Command.COLCNVAS);
+        com.send(outMessage);
+
         inMessage = (Message) com.recv();
         if (inMessage.getCommand() != Command.ACK)
         {

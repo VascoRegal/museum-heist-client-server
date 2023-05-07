@@ -19,7 +19,7 @@ public class PartiesMemoryInterface {
 
     public Message process(Message in)
     {
-        System.out.println(in);
+        //System.out.println(in);
         PartyOperationMessage m;
         MovementMessage mm;
         PartiesClientProxy caleeProxy = ((PartiesClientProxy) Thread.currentThread() );

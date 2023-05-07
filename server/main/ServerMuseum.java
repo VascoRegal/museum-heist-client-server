@@ -32,7 +32,7 @@ public class ServerMuseum {
         scon = new ServerCom(port);
         scon.start();
 
-        System.out.println("General Server listening @ " + port);
+        System.out.println("Museum Server listening @ " + port);
 
         MuseumClientProxy cliProxy;
         boolean running = true;

@@ -1,6 +1,7 @@
 package server.shared;
 
 import protocol.messages.Command;
+import protocol.messages.HandCanvasMessage;
 import protocol.messages.Message;
 import protocol.messages.MessageFactory;
 import server.entities.CollectionSiteClientProxy;
@@ -17,7 +18,7 @@ public class CollectionSiteMemoryInterface {
     public Message process(Message in)
     {
         Command cmd;
-        System.out.println(in);
+        //System.out.println(in);
 
         CollectionSiteClientProxy caleeProxy = ((CollectionSiteClientProxy) Thread.currentThread() );
         
@@ -54,6 +55,16 @@ public class CollectionSiteMemoryInterface {
 
             case TKREST:
                 collectionSiteMemory.takeARest();
+                return MessageFactory.serverCreate(Command.ACK);
+
+            case HNDCNVAS:
+                HandCanvasMessage hm = (HandCanvasMessage) in;
+                caleeProxy.setCanvas(hm.getCanvas());
+                collectionSiteMemory.handCanvas();
+                return MessageFactory.serverCreate(Command.ACK);
+
+            case COLCNVAS:
+                collectionSiteMemory.collectCanvas();
                 return MessageFactory.serverCreate(Command.ACK);
 
             default:
