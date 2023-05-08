@@ -5,6 +5,10 @@ import server.entities.PartiesClientProxy;
 import server.shared.PartiesMemory;
 import server.shared.PartiesMemoryInterface;
 
+
+/**
+ * Instantiation of servers
+ */
 public class ServerParties {
     public static void main(String[] args)
     {

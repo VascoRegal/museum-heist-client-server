@@ -5,24 +5,41 @@ import client.stubs.PartiesMemoryStub;
 import client.stubs.GeneralMemoryStub;
 import client.stubs.MuseumMemoryStub;
 
+/**
+ * MasterThief class
+ * 
+ * Communicates with the servers via stubs
+ */
 public class MasterThief extends Thief {
 
+    /*
+     * General stub
+     */
     GeneralMemoryStub generalMemory;
 
+    /**
+     * ColSite stub
+     */
     CollectionSiteMemoryStub collectionSiteMemory;
 
+    /**
+     * Parties stub
+     */
     PartiesMemoryStub partiesMemory;
 
+    /**
+     * Museum stub
+     */
     MuseumMemoryStub museumMemory;
 
     /**
-     *  Collection Site memory instantiation.
-     *    
-     *    @param id thief identification
-     *    @param generalMemory general memory reference
-     *    @param collectionSiteMemory collection site memory reference
+     * 
+     * @param id 
+     * @param generalMemory
+     * @param collectionSiteMemory
+     * @param partiesMemory
+     * @param museumMemory
      */
-
     public MasterThief(
         int id,
         GeneralMemoryStub generalMemory,
@@ -55,7 +72,6 @@ public class MasterThief extends Thief {
             {
                 case 'p':
                     partyId = prepareAssaultParty();
-                    //System.out.println("Created party " + partyId);
                     sendAssaultParty(partyId);
                     break;
                 case 'r':
@@ -63,34 +79,14 @@ public class MasterThief extends Thief {
                     collectACanvas();
                     break;
                 case 's':
-                    //System.out.println("Operation END");
                     break;
             }
         }
-
-        System.out.println("present the res my nigga gear up bucko");
-
-        /*
-        collectionSiteMemory.startOperations();                             // start the operations
-        while (generalMemory.isHeistInProgres()) {                          // while heist is running
-            action = collectionSiteMemory.appraiseSit();                    // decide what action to do next
-            switch (action) {           
-                case 'p':                                                   // 'p' - create a party
-                    partyId = collectionSiteMemory.prepareAssaultParty();   // prepare it
-                    collectionSiteMemory.sendAssaultParty(partyId);         // send it when ready
-                    break;
-                case 'r':                                                   // rest  
-                    collectionSiteMemory.takeARest();                       // wait for thieves arrival
-                    collectionSiteMemory.collectACanvas();                  // awake to collect canvas
-                    break;
-                case 's':
-                    break;
-            }
-        }
-        collectionSiteMemory.sumUpResults();                                // sum up and present the results
-        */
     }
 
+    /**
+     *  start operations
+     */
     private void startOperations()
     {
         this.setThiefState(ThiefState.PLANNING_THE_HEIST);
@@ -98,11 +94,19 @@ public class MasterThief extends Thief {
         collectionSiteMemory.startOperations();
     }
 
+    /**
+     * 
+     * @return bool wether or not heist is running
+     */
     private boolean isHeistInProgress()
     {
         return collectionSiteMemory.isHeistInProgress();
     }
 
+    /**
+     * decide what to do next with current resources
+     * @return char, operation to do next
+     */
     private char appraiseSit()
     {
         this.setThiefState(ThiefState.DECIDING_WHAT_TO_DO);
@@ -110,6 +114,10 @@ public class MasterThief extends Thief {
         return collectionSiteMemory.appraiseSit();
     }
 
+    /**
+     * prepare an assault party
+     * @return
+     */
     private int prepareAssaultParty()
     {
         this.setThiefState(ThiefState.ASSEMBLING_A_GROUP);
@@ -117,14 +125,21 @@ public class MasterThief extends Thief {
         return collectionSiteMemory.prepareAssaultParty();
     }
 
+    /**
+     * send the party
+     * @param partyId id of the party
+     */
     private void sendAssaultParty(int partyId)
     {
-        int targetRoom = museumMemory.getAvailableRoom();
+        //int targetRoom = museumMemory.getAvailableRoom();
         this.setThiefState(ThiefState.DECIDING_WHAT_TO_DO);
-        partiesMemory.sendAssaultParty(partyId, targetRoom);
+        partiesMemory.sendAssaultParty(partyId, -1);
         generalMemory.setMasterThiefState(ThiefState.DECIDING_WHAT_TO_DO);
     }
 
+    /**
+     * wait for groups to arrive
+     */
     private void takeARest()
     {
         this.setThiefState(ThiefState.WAITING_FOR_GROUP_ARRIVAL);
@@ -132,6 +147,9 @@ public class MasterThief extends Thief {
         collectionSiteMemory.takeARest();
     }
 
+    /**
+     * collect a canvas
+     */
     private void collectACanvas()
     {
         collectionSiteMemory.collectCanvas();

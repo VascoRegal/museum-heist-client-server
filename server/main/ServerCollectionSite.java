@@ -5,6 +5,9 @@ import server.entities.CollectionSiteClientProxy;
 import server.shared.CollectionSiteMemory;
 import server.shared.CollectionSiteMemoryInterface;
 
+/**
+ * Instantiation of servers
+ */
 public class ServerCollectionSite {
     public static void main(String[] args)
     {

@@ -1,5 +1,8 @@
 package client.entities;
 
+/**
+ * Interface for server object cloning
+ */
 public interface ThiefCloning {
     public int getThiefId();
     public void setThiefId(int id);

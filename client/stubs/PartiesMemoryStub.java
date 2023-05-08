@@ -1,6 +1,5 @@
 package client.stubs;
 
-import client.entities.OrdinaryThief;
 import protocol.communication.ClientCom;
 import protocol.messages.Command;
 import protocol.messages.Message;
@@ -9,17 +8,42 @@ import protocol.messages.MovementMessage;
 import protocol.messages.PartyOperationMessage;
 import protocol.messages.RoomAvailableMessage;
 
+/**
+ * Parties Stub
+ * 
+ * produces Messages via teh MessageFactory and sends them to the respective
+ * server
+ * 
+ * Waits for server responses before proceeding
+ */
 public class PartiesMemoryStub {
+
+    /**
+     * server host
+     */
     private String hostName;
     
+    /**
+     * server port
+     */
     private int port;
 
+    /**
+     * 
+     * @param host
+     * @param port
+     */
     public PartiesMemoryStub(String host, int port)
     {
         this.hostName = host;
         this.port = port;
     }
 
+    /**
+     * preaper excursion for partyId
+     * @param partyId
+     * @return
+     */
     public int prepareExcursion(int partyId)
     {
         RoomAvailableMessage inMessage;
@@ -30,10 +54,15 @@ public class PartiesMemoryStub {
         com.send(outMessage);
 
         inMessage = (RoomAvailableMessage) com.recv();
-
+        com.close();
         return inMessage.getRoomId();
     }
 
+    /**
+     * send the party to room
+     * @param partyId
+     * @param roomId
+     */
     public void sendAssaultParty(int partyId, int roomId)
     {
         Message inMessage;
@@ -49,8 +78,14 @@ public class PartiesMemoryStub {
         {
             System.exit(1);
         }
+        com.close();
     }
 
+    /**
+     * crawl to location, send atributes as params
+     * @param location
+     * @param md
+     */
     public void crawlIn(int location, int md)
     {
         Message inMessage;
@@ -64,24 +99,31 @@ public class PartiesMemoryStub {
 
         if (inMessage.getCommand() != Command.ACK)
         {
-            System.out.println("Invalid Resp");
+            System.out.println("Invalid Resp crl in");
             System.exit(1);
         }
+        com.close();
     }
 
-    public void crawlOut()
+    /**
+     * crawl back to site, send canvas status as param
+     * @param withCanvas
+     */
+    public void crawlOut(boolean withCanvas)
     {
-        Message inMessage, outMessage;
+        MovementMessage outMessage;
+        Message inMessage;
         ClientCom com = new ClientCom(hostName, port);
 
-        outMessage = MessageFactory.clientCreate(Command.CRWLOT);
+        outMessage = MessageFactory.clientMovementMessage(Command.CRWLOT, withCanvas);
         com.send(outMessage);
         inMessage = (Message) com.recv();
 
         if (inMessage.getCommand() != Command.ACK)
         {
-            System.out.println("Invalid Resp");
+            System.out.println("Invalid Resp crl ot");
             System.exit(1);
         }
+        com.close();
     }
 }

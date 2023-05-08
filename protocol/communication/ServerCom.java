@@ -6,23 +6,52 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * handles server side communication with a client
+ * 
+ * accepts connection and creates communication channels
+ */
 public class ServerCom {
        
+    /**
+     * channel to listen for new connections
+     */
     private ServerSocket listeningSocket = null;
 
+    /**
+     * channel for communication
+     */
     private Socket commSock = null;
     
+    /**
+     * server port
+     */
     private int port;
 
+    /**
+     * input stream
+     */
     private ObjectInputStream in = null;
 
+    /**
+     * outrput stream
+     */
     private ObjectOutputStream out = null;
 
+    /**
+     * instantiate the listening process
+     * @param port
+     */
     public ServerCom(int port)
     {
         this.port = port;
     }
 
+    /**
+     * generate new communication channel
+     * @param port
+     * @param lSock
+     */
     public ServerCom(int port, ServerSocket lSock)
     {
         this.port = port;
@@ -35,6 +64,9 @@ public class ServerCom {
         }
     }
 
+    /**
+     * setup listening socket
+     */
     public void start()
     {
         try {
@@ -46,6 +78,9 @@ public class ServerCom {
         }
     }
 
+    /**
+     * close listening socket
+     */
     public void end()
     {
         try {
@@ -58,6 +93,10 @@ public class ServerCom {
     }
 
 
+    /**
+     * accept connections and create new channels for these connections
+     * @return Communication channel for client
+     */
     public ServerCom accept()
     {
         ServerCom scon;
@@ -76,7 +115,9 @@ public class ServerCom {
         return scon;
     }
 
-
+    /**
+     * close sockets and streams
+     */
     public void close()
     {
         try
@@ -91,6 +132,10 @@ public class ServerCom {
         }
     }
 
+    /**
+     * recv form client
+     * @return 
+     */
     public Object recv()
     {
         Object o = null;
@@ -105,6 +150,10 @@ public class ServerCom {
         return o;
     }
 
+    /**
+     * send to client
+     * @param obj
+     */
     public void send(Object obj)
     {
         try {

@@ -7,6 +7,8 @@ public class MovementMessage extends Message {
 
     private int location;
 
+    private boolean hasCanvas;
+
     public MovementMessage(int thiefId, ThiefState state, Command cmd, int md)
     {
         super(thiefId, state, cmd);
@@ -20,6 +22,12 @@ public class MovementMessage extends Message {
         this.md = md;
     }
 
+    public MovementMessage(int thiefId, ThiefState state, Command cmd, boolean cnvs)
+    {
+        super(thiefId, state, cmd);
+        this.hasCanvas = cnvs;
+    }
+
     public int getLocation()
     {
         return this.location;
@@ -28,5 +36,10 @@ public class MovementMessage extends Message {
     public int getMaxDisplacement()
     {
         return this.md;
+    }
+
+    public boolean getCanvas()
+    {
+        return this.hasCanvas;
     }
 }

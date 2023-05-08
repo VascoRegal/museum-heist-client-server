@@ -5,6 +5,10 @@ import server.entities.MuseumClientProxy;
 import server.shared.MuseumMemory;
 import server.shared.MuseumMemoryInterface;
 
+
+/**
+ * Instantiation of servers
+ */
 public class ServerMuseum {
     public static void main(String[] args)
     {

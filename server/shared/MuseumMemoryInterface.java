@@ -5,15 +5,31 @@ import protocol.messages.Message;
 import protocol.messages.MessageFactory;
 import protocol.messages.RoomInfoMessage;
 
+/**
+ * 
+ * Interface to process request related to the museum
+ */
 public class MuseumMemoryInterface {
     
+    /*
+     * reference to the memory
+     */
     private final MuseumMemory museumMemory;
 
+    /**
+     * 
+     * @param museumMemory
+     */
     public MuseumMemoryInterface(MuseumMemory museumMemory)
     {
         this.museumMemory = museumMemory;
     }
 
+    /**
+     * Process a message and return response
+     * @param in
+     * @return
+     */
     public Message process(Message in)
     {
         //System.out.println(in);
@@ -23,10 +39,6 @@ public class MuseumMemoryInterface {
 
         switch (in.getCommand())
         {
-            case AVLROOM:
-                roomId = museumMemory.findNonClearedRoom();
-                return MessageFactory.serverRoomAvailable(roomId);
-
             case ROOMLOC:
                 m = (RoomInfoMessage) in;
                 roomId = m.getRoomId();

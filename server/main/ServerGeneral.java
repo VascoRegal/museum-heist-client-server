@@ -5,6 +5,10 @@ import server.entities.GeneralClientProxy;
 import server.shared.GeneralMemory;
 import server.shared.GeneralMemoryInterface;
 
+
+/**
+ * Instantiation of servers
+ */
 public class ServerGeneral
 {
     public static void main(String[] args)

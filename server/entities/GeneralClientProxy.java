@@ -4,9 +4,11 @@ import protocol.communication.ServerCom;
 import protocol.messages.Message;
 import server.shared.GeneralMemoryInterface;
 
-public class GeneralClientProxy extends Thread {
-    private static int nProxy = 0;
 
+/**
+ * Proxy for object cloning and request processing
+ */
+public class GeneralClientProxy extends Thread {
     private ServerCom sconi;
 
     private GeneralMemoryInterface generalI;

@@ -1,5 +1,8 @@
 package protocol.messages;
 
+/**
+ * Possible message commands
+ */
 public enum Command {
 
     // System operations
@@ -35,5 +38,7 @@ public enum Command {
     CRWLIN,
     CRWLOT,
     PCKCNVAS,
-    HNDCNVAS
+    HNDCNVAS,
+    ROOMCMPLT,
+    ROOMUPDT
 }

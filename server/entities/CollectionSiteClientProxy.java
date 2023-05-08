@@ -6,27 +6,55 @@ import protocol.communication.ServerCom;
 import protocol.messages.Message;
 import server.shared.CollectionSiteMemoryInterface;
 
+/**
+ * Proxy for object cloning and request processing
+ */
 public class CollectionSiteClientProxy extends Thread implements ThiefCloning {
-    private static int nProxy = 0;
 
+    /**
+     * thief id
+     */
     private int thiefId;
 
+    /**
+     * party
+     */
     private int partyId;
 
+    /**
+     * state
+     */
     private ThiefState state;
 
+    /**
+     * wether or not has canvas
+     */
     private boolean canvas;
 
+    /**
+     * comunication channel
+     */
     private ServerCom sconi;
 
+    /**
+     * message processing interface
+     */
     private CollectionSiteMemoryInterface colSiteI;
 
+    /**
+     * 
+     * @param sconi
+     * @param colSiteI
+     */
     public CollectionSiteClientProxy(ServerCom sconi, CollectionSiteMemoryInterface colSiteI)
     {
         this.sconi = sconi;
         this.colSiteI = colSiteI;
     }
 
+    /**
+     * receive, process and reply to a message
+     */
     @Override
     public void run()
     {

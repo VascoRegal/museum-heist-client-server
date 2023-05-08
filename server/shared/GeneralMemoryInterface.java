@@ -6,18 +6,33 @@ import protocol.messages.Message;
 import protocol.messages.MessageFactory;
 import protocol.messages.UpdateStateMessage;
 
+/**
+ * Interface to read request and dispatch them to shared memory operations
+ */
 public class GeneralMemoryInterface {
     
+    /**
+     * memeory reference
+     */
     private final GeneralMemory generalMem;
 
+    /**
+     * constructor
+     * @param mem
+     */
     public GeneralMemoryInterface(GeneralMemory mem)
     {
         this.generalMem = mem;
     }
 
+    /**
+     * Process a message and return response
+     * @param in
+     * @return
+     */
     public Message process(Message in)
     {
-        //System.out.println(in);
+
 
         switch (in.getCommand())
         {

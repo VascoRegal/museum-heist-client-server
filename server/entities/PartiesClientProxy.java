@@ -6,9 +6,11 @@ import protocol.communication.ServerCom;
 import protocol.messages.Message;
 import server.shared.PartiesMemoryInterface;
 
-public class PartiesClientProxy extends Thread implements ThiefCloning {
-    private static int nProxy = 0;
 
+/**
+ * Proxy for object cloning and request processing
+ */
+public class PartiesClientProxy extends Thread implements ThiefCloning {
     private int thiefId;
 
     private int partyId;
@@ -18,6 +20,8 @@ public class PartiesClientProxy extends Thread implements ThiefCloning {
     private int md;
 
     private ThiefState state;
+
+    private boolean hasCanvas;
 
     private ServerCom sconi;
 
@@ -103,6 +107,16 @@ public class PartiesClientProxy extends Thread implements ThiefCloning {
     public void setMaxDisplacement(int md)
     {
         this.md = md;
+    }
+
+    public boolean hasCanvas()
+    {
+        return this.hasCanvas;
+    }
+
+    public void setCanvas(boolean cnvs)
+    {
+        this.hasCanvas = cnvs;
     }
 
 }

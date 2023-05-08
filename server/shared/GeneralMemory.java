@@ -3,14 +3,24 @@ package server.shared;
 import client.entities.ThiefState;
 import consts.HeistConstants;
 
+/**
+ * General shared region
+ */
 public class GeneralMemory {
     
+    /**
+     * master thief state reference
+     */
     private ThiefState mtState;
 
+    /**
+     * ordinary thief state reference
+     */
     private ThiefState [] otStates;
 
-    private String logName;
-
+    /**
+     * instatiation
+     */
     public GeneralMemory()
     {
         int i;
@@ -23,19 +33,33 @@ public class GeneralMemory {
         }
     }
 
+    /**
+     * initialize logging
+     * @param fileName
+     */
     public synchronized void init(String fileName)
     {
         // TODO: LOGS
-        System.out.println("Initing shit ya get me");
     }
 
+    /**
+     * set the state of the MT
+     * @param ts
+     */
     public synchronized void setMasterThiefState(ThiefState ts)
     {
         this.mtState = ts;
+        System.out.println("[GENERAL] Update MasterThief state to " + ts);
     }
 
+    /**
+     * set Ot states
+     * @param thiefId
+     * @param ts
+     */
     public synchronized void setOrdinaryThiefState(int thiefId, ThiefState ts)
     {
+        System.out.println("[GENERAL] Update OrdinaryThief_" + thiefId + " state to " + ts);
         this.otStates[thiefId] = ts;
     }
 }

@@ -3,23 +3,53 @@ package server.shared;
 import client.entities.ThiefState;
 import consts.HeistConstants;
 import server.entities.PartiesClientProxy;
+import server.entities.RoomState;
 import structs.MemException;
 import structs.MemPartyArray;
+
+/**
+ * Parties memory region
+ */
 public class PartiesMemory {
     
-
+    /**
+     * ordinary thieves thread reference
+     */
     private PartiesClientProxy[] ots;
 
+    /**
+     * reference to thieves party assignment
+     */
     private int partyMembers[];
 
+    /**
+     * reference to parties ready to be sent
+     */
     private int readyParties[];
 
+    /**
+     * array of party MemArrays for movement operations
+     */
     private final MemPartyArray[] parties;
 
+    /**
+     * reference to the next thief to move
+     */
     private int nextMovingThief[];
 
+    /**
+     * track of party target room
+     */
     private int partyRooms[];
 
+    /**
+     * state of rooms
+     */
+    private RoomState rooms[];
+
+    /**
+     * constructor
+     */
     public PartiesMemory()
     {
         int i;
@@ -43,16 +73,34 @@ public class PartiesMemory {
             nextMovingThief[i] = -1;
             partyRooms[i] = -1;
         }
+        rooms = new RoomState[HeistConstants.NUM_ROOMS];
+        for (i = 0; i < HeistConstants.NUM_ROOMS; i++)
+        {
+            rooms[i] = RoomState.AVAILABLE;
+        }
     }
     
+    /**
+     * send assault party to room
+     * @param partyId
+     * @param roomId
+     */
     public synchronized void sendAssaultParty(int partyId, int roomId)
     {
+        roomId = findNonClearedRoom();
+        System.out.println("[PARTY_" + partyId + "] to Room_" + roomId);
+        rooms[roomId] = RoomState.IN_PROGRESS;
         readyParties[partyId] = HeistConstants.PARTY_SIZE;
         partyRooms[partyId] = roomId;
-        System.out.println(String.format("[MT] :  Sending party %d to room %d.",partyId, roomId));
+
         notifyAll();
     }
 
+    /**
+     * OT waits for party to start
+     * @param partyId
+     * @return
+     */
     public synchronized int prepareExcursion(int partyId)
     {
         int ordinaryThiefId;
@@ -62,13 +110,10 @@ public class PartiesMemory {
         ots[ordinaryThiefId].setThiefState(ThiefState.CRAWLING_INWARDS);
         partyMembers[ordinaryThiefId] = partyId;
 
-        System.out.println(String.format("[PARTY%d] [OT%d] :  Preparing for excursion.",partyId, ordinaryThiefId));
-
         if (parties[partyId] == null)
         {
             parties[partyId] = new MemPartyArray(new PartiesClientProxy[HeistConstants.PARTY_SIZE]);
             nextMovingThief[partyId] = ordinaryThiefId;
-            System.out.println(String.format("[PARTY%d] :  Head is OT%d.",partyId, ordinaryThiefId));
         }
 
         try {
@@ -81,9 +126,8 @@ public class PartiesMemory {
         while (true)
         {
             try {
-                //System.out.println("[OT" + ordinaryThiefId + "] prep exurs on party " + partyId);
+                System.out.println("[PARTY_" + partyId + " OT_" + ordinaryThiefId + " preparing for excursion");
                 wait();
-
                 if (readyParties[partyId] != 0 && partyMembers[ordinaryThiefId] == partyId)
                 {
                     break;
@@ -92,20 +136,22 @@ public class PartiesMemory {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //System.out.println("[OT" + ordinaryThiefId + "] NOTIFIED PARTY " + partyId + " to start. ME=(id=" + ordinaryThiefId + ",p=" + partyMembers[ordinaryThiefId] + ")");
         }
-        //System.out.println("[OT" + ordinaryThiefId + "] Proceeding ");
+        System.out.println("[PARTY_" + partyId + " OT_" + ordinaryThiefId + " starting movement");
         readyParties[partyId]--;
         return partyRooms[partyId];
     }
 
+    /**
+     * start crawling movement to room
+     * @param roomLocation
+     */
     public synchronized void crawlingIn(int roomLocation)
     {
         PartiesClientProxy currentThief, closestThief;
         int partyId;
         currentThief = ((PartiesClientProxy) Thread.currentThread());
         partyId = partyMembers[currentThief.getThiefId()];
-        System.out.println(String.format("[PARTY%d] :  Begin Crawling In Movement", partyId));
         parties[partyId].updateThreads();
 
         while (true) {
@@ -119,10 +165,12 @@ public class PartiesMemory {
                     e.printStackTrace();
                 }
             }
+            System.out.println("[PARTY_" + partyId + " OT_" + currentThief.getThiefId() + " (pos=" + currentThief.getPosition() + ", md=" + currentThief.getMaxDisplacement() + ") trying to move");
             while (parties[partyId].canMove() && currentThief.getPosition() < roomLocation) {
-
+                System.out.println("[PARTY_" + partyId + " OT_" + currentThief.getThiefId() + " (pos=" + currentThief.getPosition() + ", md=" + currentThief.getMaxDisplacement() + ") can move");
                 parties[partyId].doBestMove();
             }
+            System.out.println("[PARTY_" + partyId + " OT_" + currentThief.getThiefId() + " (pos=" + currentThief.getPosition() + ", md=" + currentThief.getMaxDisplacement() + ") can no longer move");
             closestThief = parties[partyId].getNext();
             nextMovingThief[partyId] = closestThief.getThiefId();
             notifyAll();
@@ -130,6 +178,7 @@ public class PartiesMemory {
             if (currentThief.getPosition() >= roomLocation) {
                 currentThief.setThiefState(ThiefState.AT_A_ROOM);
                 currentThief.setPosition(roomLocation);
+                System.out.println("[PARTY_" + partyId + " OT_" + currentThief.getThiefId() + " (pos=" + currentThief.getPosition() + ", md=" + currentThief.getMaxDisplacement() + ") arrived at location");
                 if (currentThief.getThiefId() == parties[partyId].tail().getThiefId())
                 {
                     nextMovingThief[partyId] = -1;
@@ -139,6 +188,9 @@ public class PartiesMemory {
         }
     }
 
+    /**
+     * crawl back to site
+     */
     public synchronized void crawlingOut()
     {
         PartiesClientProxy currentThief, closestThief;
@@ -149,8 +201,6 @@ public class PartiesMemory {
 
         currentThief = ((PartiesClientProxy) Thread.currentThread());
         partyId = partyMembers[currentThief.getThiefId()];
-
-        System.out.println(String.format("[PARTY%d] [OT%d] :  Begin Crawling Out Movement", partyId, currentThief.getThiefId()));
 
         parties[partyId].updateThreads();
 
@@ -172,8 +222,11 @@ public class PartiesMemory {
                 }
             }
             while (parties[partyId].canMove() && currentThief.getPosition() > siteLocation) {
+                System.out.println("[PARTY_" + partyId + " OT_" + currentThief.getThiefId() + " (pos=" + currentThief.getPosition() + ", md=" + currentThief.getMaxDisplacement() + ") trying to move");
                 parties[partyId].doBestMove();
             }
+            System.out.println("[PARTY_" + partyId + " OT_" + currentThief.getThiefId() + " (pos=" + currentThief.getPosition() + ", md=" + currentThief.getMaxDisplacement() + ") can no longer move");
+
             closestThief = parties[partyId].getNext();
             nextMovingThief[partyId] = closestThief.getThiefId();
             notifyAll();
@@ -183,16 +236,48 @@ public class PartiesMemory {
                 currentThief.setPosition(siteLocation);
                 
                 partyMembers[currentThief.getThiefId()] = -1;
+
+
+                System.out.println(String.format("[PARTY%d] [ROOM%d] [OT%d] :  Has canvas - %s", partyId, partyRooms[partyId] ,currentThief.getThiefId(), (currentThief.hasCanvas()) ? "true" : "false" ));
+                if (!currentThief.hasCanvas() && rooms[partyRooms[partyId]] != RoomState.COMPLETED)
+                {
+                    rooms[partyRooms[partyId]] = RoomState.COMPLETED;
+                    System.out.println("UPDATED ROOM " + partyRooms[partyId] + " TO COMPLETED");
+                }
+
                 if (currentThief.getThiefId() == parties[partyId].tail().getThiefId())
                 {
+
+                    if (rooms[partyRooms[partyId]] != RoomState.COMPLETED)
+                    {
+                        rooms[partyRooms[partyId]] = RoomState.AVAILABLE;
+                    }
+
                     parties[partyId] = null;
                     partyRooms[partyId] = -1;
                     nextMovingThief[partyId] = -1;
                     readyParties[partyId] = -1;
+                    System.out.println("[PARTY_" + partyId + " OT_" + currentThief.getThiefId() + " (pos=" + currentThief.getPosition() + ", md=" + currentThief.getMaxDisplacement() + ") arrived at collection site");
                 }
 
                 break;
             }
         }
+    }
+
+    /**
+     * find next available room
+     * @return
+     */
+    private int findNonClearedRoom()
+    {
+        for (int i = 0; i < HeistConstants.NUM_ROOMS; i++)
+        {
+            if (rooms[i] == RoomState.AVAILABLE)
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }

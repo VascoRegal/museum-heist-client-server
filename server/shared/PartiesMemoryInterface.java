@@ -8,15 +8,30 @@ import protocol.messages.MovementMessage;
 import protocol.messages.PartyOperationMessage;
 import server.entities.PartiesClientProxy;
 
+/**
+ * Interface to read request and dispatch them to shared memory operations
+ */
 public class PartiesMemoryInterface {
 
+    /**
+     * memory reference
+     */
     private final PartiesMemory partiesMemory;
 
+    /**
+     * constructor
+     * @param mem
+     */
     public PartiesMemoryInterface(PartiesMemory mem)
     {
         this.partiesMemory = mem;
     }
 
+    /**
+     * Process a message and return response
+     * @param in
+     * @return
+     */
     public Message process(Message in)
     {
         //System.out.println(in);
@@ -47,6 +62,8 @@ public class PartiesMemoryInterface {
                 return MessageFactory.serverCreate(Command.ACK);
 
             case CRWLOT:
+                mm = (MovementMessage) in;
+                caleeProxy.setCanvas(mm.getCanvas());
                 caleeProxy.setThiefState(ThiefState.CRAWLING_OUTWARDS);
                 partiesMemory.crawlingOut();
                 return MessageFactory.serverCreate(Command.ACK);

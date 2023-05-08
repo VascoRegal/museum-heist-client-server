@@ -8,6 +8,9 @@ import client.stubs.MuseumMemoryStub;
 import consts.HeistConstants;
 import consts.Registry;
 
+/**
+ * Client Instantiation
+ */
 public class ClientOrdinaryThief {
     public static void main(String[] args)
     {

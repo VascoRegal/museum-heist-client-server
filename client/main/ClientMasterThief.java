@@ -7,6 +7,9 @@ import client.stubs.GeneralMemoryStub;
 import client.stubs.MuseumMemoryStub;
 import consts.Registry;
 
+/**
+ * Client instantiation
+ */
 public class ClientMasterThief {
     public static void main(String [] args)
     {

@@ -6,15 +6,30 @@ import protocol.messages.Message;
 import protocol.messages.MessageFactory;
 import server.entities.CollectionSiteClientProxy;
 
+/**
+ * Interface to read request and dispatch them to shared memory operations
+ */
 public class CollectionSiteMemoryInterface {
 
+    /**
+     * Memory reference
+     */
     private final CollectionSiteMemory collectionSiteMemory;
 
+    /**
+     * constructor
+     * @param mem
+     */
     public CollectionSiteMemoryInterface(CollectionSiteMemory mem)
     {
         this.collectionSiteMemory = mem;
     }
 
+    /**
+     * Process a message and return response
+     * @param in
+     * @return
+     */
     public Message process(Message in)
     {
         Command cmd;

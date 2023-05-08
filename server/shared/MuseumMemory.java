@@ -11,7 +11,6 @@ import server.entities.RoomState;
  *
  *  Shared memory containing rooms and room operations
  *
- *  Public methods are controlled with an access semaphore
  */
 public class MuseumMemory {
     
@@ -28,42 +27,22 @@ public class MuseumMemory {
      */
 
     public MuseumMemory() {
+        int totalpaintings = 0;
         rooms = new Room [HeistConstants.NUM_ROOMS];
         for (int i=0; i < HeistConstants.NUM_ROOMS; i++) {
             rooms[i] = new Room(i);
+            totalpaintings += rooms[i].getNumHangingPaintings();
+            System.out.println("ROOM " + i + " - " + rooms[i].getNumHangingPaintings() + " paintings");
         }
+        System.out.println("Total :" + totalpaintings );
     }
 
     /**
-     *  Get a room available to send a party
+     * Get location of a room
      * 
-     *  Called by the Master Thief when assembling a group
-     *
-     *    @return AVAILABLE room
+     * @param roomId
+     * @return location of the room
      */
-
-    public int findNonClearedRoom() {
-        for (int i=0 ; i < rooms.length; i++) {
-            if (rooms[i].getRoomState() == RoomState.AVAILABLE) {
-                rooms[i].setRoomState(RoomState.IN_PROGRESS);
-                return i;
-            }
-        }
-        return -1;
-    }
-
-
-    /**
-     *  Update a room's state
-     *
-     *    @param roomId room identification
-     *    @param roomState room state
-     */
-    public void setRoomState(int roomId, RoomState roomState) {
-        rooms[roomId].setRoomState(roomState);
-    }
-
-
     public int getRoomLocation(int roomId)
     {
         return rooms[roomId].getLocation();
@@ -71,28 +50,27 @@ public class MuseumMemory {
 
 
     /**
-     *  Update a room's state
-     * 
-     *  Roll a canvas. Called by Ordinary Thieves
+     *  
+     *  Roll a canvas.
      * 
      *  Nothing happens if there are no canvas on the walls
      *
      *    @param roomId room identification
      */
-    public boolean rollACanvas(int roomId) {
+    public synchronized boolean rollACanvas(int roomId) {
         Room targetRoom;
         boolean picked = false;
         targetRoom = rooms[roomId];
 
-        System.out.println(String.format("[ROOM%d] Rolling a canvas", roomId));
+        System.out.println(String.format("[MUSEUM] Room_%d Lost a painting (we can roll it up)", roomId));
         if (!targetRoom.isEmpty()) {
             targetRoom.removePainting();
-            System.out.println(String.format("[ROOM%d] We can roll it up", roomId));
             picked = true;
         } else {
-            System.out.println(String.format("[ROOM%d] Room is empty", roomId));
             targetRoom.setRoomState(RoomState.COMPLETED);
         }
+
+        System.out.println(String.format("[MUSEUM] Room_%d has %d paintings remaining", roomId, rooms[roomId].getNumHangingPaintings()));
         return picked;
     }
 }
